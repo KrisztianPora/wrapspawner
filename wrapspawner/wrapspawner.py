@@ -147,6 +147,12 @@ class WrapSpawner(Spawner):
             else:
                 raise RuntimeError("No child spawner yet exists - can not get progress yet")
 
+    def run_pre_spawn_hook(self):
+        """Run the pre_spawn_hook if defined"""
+        if self.child_spawner:
+            if self.child_spawner.pre_spawn_hook:
+                return self.child_spawner.pre_spawn_hook(self.child_spawner)
+
 class ProfilesSpawner(WrapSpawner):
 
     """ProfilesSpawner - leverages the Spawner options form feature to allow user-driven
