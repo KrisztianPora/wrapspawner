@@ -76,8 +76,7 @@ class WrapSpawner(Spawner):
                 oauth_client_id = self.oauth_client_id,
                 server = self._server,
                 config = self.config,
-                **self.child_config,
-                pre_spawn_hook = self.pre_spawn_hook
+                **self.child_config
                 )
             # initial state will always be wrong since it will see *our* state
             self.child_spawner.clear_state()
