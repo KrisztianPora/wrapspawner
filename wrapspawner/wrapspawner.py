@@ -76,7 +76,8 @@ class WrapSpawner(Spawner):
                 oauth_client_id = self.oauth_client_id,
                 server = self._server,
                 config = self.config,
-                **self.child_config
+                **self.child_config,
+                pre_spawn_hook = self.pre_spawn_hook
                 )
             # initial state will always be wrong since it will see *our* state
             self.child_spawner.clear_state()
@@ -146,12 +147,6 @@ class WrapSpawner(Spawner):
                 return self.child_spawner.progress
             else:
                 raise RuntimeError("No child spawner yet exists - can not get progress yet")
-
-    def run_pre_spawn_hook(self):
-        """Run the pre_spawn_hook if defined"""
-        if self.child_spawner:
-            if self.child_spawner.pre_spawn_hook:
-                return self.child_spawner.pre_spawn_hook(self.child_spawner)
 
 class ProfilesSpawner(WrapSpawner):
 
@@ -245,77 +240,4 @@ class ProfilesSpawner(WrapSpawner):
     def clear_state(self):
         super().clear_state()
         self.child_profile = ''
-
-class DockerProfilesSpawner(ProfilesSpawner):
-
-    """DockerProfilesSpawner - leverages ProfilesSpawner to dynamically create DockerSpawner
-        profiles dynamically by looking for docker images that end with "jupyterhub". Due to the
-        profiles being dynamic the "profiles" config item from the ProfilesSpawner is renamed as
-        "default_profiles". Please note that the "docker" and DockerSpawner packages are required
-        for this spawner to work.
-    """
-
-    default_profiles = List(
-        trait = Tuple( Unicode(), Unicode(), Type(Spawner), Dict() ),
-        default_value = [],
-        config = True,
-        help = """List of profiles to offer in addition to docker images for selection. Signature is:
-            List(Tuple( Unicode, Unicode, Type(Spawner), Dict )) corresponding to
-            profile display name, unique key, Spawner class, dictionary of spawner config options.
-
-            The first three values will be exposed in the input_template as {display}, {key}, and {type}"""
-        )
-
-    docker_spawner_args = Dict(
-        default_value = {},
-        config = True,
-        help = "Args to pass to DockerSpawner."
-    )
-
-    jupyterhub_docker_tag_re = re.compile('^.*jupyterhub$')
-
-    def _nvidia_args(self):
-        try:
-            resp = urllib.request.urlopen('http://localhost:3476/v1.0/docker/cli/json')
-            body = resp.read().decode('utf-8')
-            args =  json.loads(body)
-            return dict(
-                read_only_volumes={vol.split(':')[0]: vol.split(':')[1] for vol in args['Volumes']},
-                extra_create_kwargs={"volume_driver": args['VolumeDriver']},
-                extra_host_config={"devices": args['Devices']},
-            )
-        except urllib.error.URLError:
-            return {}
-
-
-    def _docker_profile(self, nvidia_args, image):
-        spawner_args = dict(container_image=image, network_name=self.user.name)
-        spawner_args.update(self.docker_spawner_args)
-        spawner_args.update(nvidia_args)
-        nvidia_enabled = "w/GPU" if len(nvidia_args) > 0 else "no GPU"
-        return ("Docker: (%s): %s"%(nvidia_enabled, image), "docker-%s"%(image), "dockerspawner.SystemUserSpawner", spawner_args)
-
-    def _jupyterhub_docker_tags(self):
-        try:
-            include_jh_tags = lambda tag: self.jupyterhub_docker_tag_re.match(tag)
-            return filter(include_jh_tags, [tag for image in docker.from_env().images.list() for tag in image.tags])
-        except NameError:
-            raise Exception('The docker package is not installed and is a dependency for DockerProfilesSpawner')
-
-    def _docker_profiles(self):
-        return [self._docker_profile(self._nvidia_args(), tag) for tag in self._jupyterhub_docker_tags()]
-
-    @property
-    def profiles(self):
-        return self.default_profiles + self._docker_profiles()
-
-    @property
-    def options_form(self):
-        temp_keys = [ dict(display=p[0], key=p[1], type=p[2], first='') for p in self.profiles]
-        temp_keys[0]['first'] = self.first_template
-        text = ''.join([ self.input_template.format(**tk) for tk in temp_keys ])
-        return self.form_template.format(input_template=text)
-
-
-# vim: set ai expandtab softtabstop=4:
 
