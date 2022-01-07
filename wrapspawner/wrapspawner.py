@@ -173,11 +173,6 @@ class ProfilesSpawner(WrapSpawner):
     child_profile = Unicode()
 
     form_template = Unicode("""
-        <style>
-            label{font-weight:400}#profiles-list{margin-bottom:30px}input[type=text]{padding:0 5px;height:26px}.panel-heading{cursor:pointer;font-weight:700}
-            .panel-body{display:none}.panel-default{margin:30px 0}.group{padding-bottom:5px}.group label{font-weight:700}.group div{margin-top:5px}.input-group{background-color:#EEE}
-        </style>
-
         <div class="panel panel-default">
             <div class="panel-heading">
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="10pt" height="10pt" viewBox="0 -5 40 40" version="1.1">
@@ -219,10 +214,7 @@ class ProfilesSpawner(WrapSpawner):
         )
 
     input_template = Unicode("""
-        <label for='item-{index}' class='form-control input-group'>
-            <div class='col-md-1'><input type='radio' name='profile' id='item-{index}' value='{key}' {first}></input></div>
-            <div class='col-md-11'><strong>{display}</strong></div>
-        </label>""",
+        <option value="{key}" {first}>{display}</option>""",
         config = True,
         help = """Template to construct {input_template} in form_template. This text will be formatted
             against each item in the profiles list, in order, using the following key names:
