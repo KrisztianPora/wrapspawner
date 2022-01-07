@@ -172,42 +172,17 @@ class ProfilesSpawner(WrapSpawner):
 
     child_profile = Unicode()
 
-    form_template = Unicode("""
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="10pt" height="10pt" viewBox="0 -5 40 40" version="1.1">
-                    <g><path style=" stroke:none;fill-rule:nonzero;fill:rgb(0%,0%,0%);fill-opacity:1" d="M 0 10 L 20 30 L 40 10 Z M 0 10 "/></g></svg>
-                    Options for mounting remote storage</div>
-                <div class="panel-body">
-
-                <div class="group">
-                    <label for="mounturl">WebDAV url (of Remote Storage)</label>
-                    <input class="form-control input-lg" type="text" name="mounturl" />
-                </div>
-                <div class="group">
-                    <label for="mountdir">Directory (to mount storage to, relative to $HOME)</label>
-                    <input class="form-control input-lg" type="text" name="mountdir" />
-                </div>
-                <div class="group">
-                    <label for="mountusr">Username (on Remote Storage)</label>
-                    <input class="form-control input-lg" type="text" name="mountusr" />
-                </div>
-                <div class="group">
-                    <label for="mountpwd">Password (on Remote Storage)</label>
-                    <input class="form-control input-lg" type="text" name="mountpwd" />
-                </div>
-            </div>
-        </div>
-
-        <label for="profile">Select an environment:</label>
-        <div class='form-group' id='profiles-list'>
+    form_template = Unicode(
+        """<label for="profile">Select a job profile:</label>
+        <select class="form-control" name="profile" required autofocus>
         {input_template}
-        </div>""",
+        </select>
+        """,
         config = True,
         help = """Template to use to construct options_form text. {input_template} is replaced with
             the result of formatting input_template against each item in the profiles list."""
         )
-
+        
     first_template = Unicode('selected',
         config=True,
         help="Text to substitute as {first} in input_template"
