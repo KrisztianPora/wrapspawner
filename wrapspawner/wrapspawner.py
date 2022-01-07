@@ -125,6 +125,7 @@ class WrapSpawner(Spawner):
     def start(self):
         if not self.child_spawner:
             self.construct_child()
+        self.child_spawner.run_pre_spawn_hook()
         return self.child_spawner.start()
 
     def stop(self, now=False):
