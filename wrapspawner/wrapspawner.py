@@ -174,10 +174,9 @@ class ProfilesSpawner(WrapSpawner):
 
     form_template = Unicode(
         """<label for="profile">Select a job profile:</label>
-        <select class="form-control" name="profile" required autofocus>
+        <div class='form-group' id='profiles-list'>
         {input_template}
-        </select>
-        """,
+        </div>""",
         config = True,
         help = """Template to use to construct options_form text. {input_template} is replaced with
             the result of formatting input_template against each item in the profiles list."""
@@ -189,7 +188,10 @@ class ProfilesSpawner(WrapSpawner):
         )
 
     input_template = Unicode("""
-        <option value="{key}" {first}>{display}</option>""",
+        <label for='item-{i}' class='form-control input-group'>
+            <div class='col-md-1'><input type='radio' name='profile' id='item-{i}' value='{key}' {first}></input></div>
+            <div class='col-md-11'><strong>{display}</strong></div>
+        </label>""",
         config = True,
         help = """Template to construct {input_template} in form_template. This text will be formatted
             against each item in the profiles list, in order, using the following key names:
@@ -201,7 +203,7 @@ class ProfilesSpawner(WrapSpawner):
     options_form = Unicode()
 
     def _options_form_default(self):
-        temp_keys = [ dict(display=p[0], key=p[1], type=p[2], first='') for p in self.profiles ]
+        temp_keys = [ dict(display=p[0], key=p[1], type=p[2], first='', i=index) for index, p in self.profiles ]
         temp_keys[0]['first'] = self.first_template
         text = ''.join([ self.input_template.format(**tk) for tk in temp_keys ])
         return self.form_template.format(input_template=text)
