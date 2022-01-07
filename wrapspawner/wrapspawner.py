@@ -173,10 +173,11 @@ class ProfilesSpawner(WrapSpawner):
     child_profile = Unicode()
 
     form_template = Unicode(
-        """<label for="profile">Select a job profile:</label>
-        <div class='form-group' id='profiles-list'>
+        default_value = """<label for="profile">Select a job profile:</label>
+        <select class="form-control" name="profile" required autofocus>
         {input_template}
-        </div>""",
+        </select>
+        """,
         config = True,
         help = """Template to use to construct options_form text. {input_template} is replaced with
             the result of formatting input_template against each item in the profiles list."""
@@ -187,11 +188,8 @@ class ProfilesSpawner(WrapSpawner):
         help="Text to substitute as {first} in input_template"
         )
 
-    input_template = Unicode("""
-        <label for='item-{index}' class='form-control input-group'>
-            <div class='col-md-1'><input type='radio' name='profile' id='item-{index}' value='{key}' {first}></input></div>
-            <div class='col-md-11'><strong>{display}</strong></div>
-        </label>""",
+    input_template = Unicode(
+        default_value = """<option value="{key}" {first}>{display}</option>""",
         config = True,
         help = """Template to construct {input_template} in form_template. This text will be formatted
             against each item in the profiles list, in order, using the following key names:
