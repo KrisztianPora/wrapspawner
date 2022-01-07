@@ -173,11 +173,47 @@ class ProfilesSpawner(WrapSpawner):
     child_profile = Unicode()
 
     form_template = Unicode(
-        """<label for="profile">Select a job profile:</label>
-        <select class="form-control" name="profile" required autofocus>
+        """
+        <script>
+            $(document).ready(function() {
+                $(".panel-heading").click(function(){$(".panel-body").slideToggle("slow")})
+            });
+        </script>
+        <style>
+            label{font-weight:400}#profiles-list{margin-bottom:30px}input[type=text]{padding:0 5px;height:26px}.panel-heading{cursor:pointer;font-weight:700}
+            .panel-body{display:none}.panel-default{margin:30px 0}.group{padding-bottom:5px}.group label{font-weight:700}.group div{margin-top:5px}.input-group{background-color:#EEE}
+        </style>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="10pt" height="10pt" viewBox="0 -5 40 40" version="1.1">
+                    <g><path style=" stroke:none;fill-rule:nonzero;fill:rgb(0%,0%,0%);fill-opacity:1" d="M 0 10 L 20 30 L 40 10 Z M 0 10 "/></g></svg>
+                    Options for mounting remote storage</div>
+                <div class="panel-body">
+
+                <div class="group">
+                    <label for="mounturl">WebDAV url (of Remote Storage)</label>
+                    <input class="form-control input-lg" type="text" name="mounturl" />
+                </div>
+                <div class="group">
+                    <label for="mountdir">Directory (to mount storage to, relative to $HOME)</label>
+                    <input class="form-control input-lg" type="text" name="mountdir" />
+                </div>
+                <div class="group">
+                    <label for="mountusr">Username (on Remote Storage)</label>
+                    <input class="form-control input-lg" type="text" name="mountusr" />
+                </div>
+                <div class="group">
+                    <label for="mountpwd">Password (on Remote Storage)</label>
+                    <input class="form-control input-lg" type="text" name="mountpwd" />
+                </div>
+            </div>
+        </div>
+
+        <label for="profile">Select an environment:</label>
+        <div class='form-group' id='profiles-list'>
         {input_template}
-        </select>
-        """,
+        </div>""",
         config = True,
         help = """Template to use to construct options_form text. {input_template} is replaced with
             the result of formatting input_template against each item in the profiles list."""
@@ -189,7 +225,10 @@ class ProfilesSpawner(WrapSpawner):
         )
 
     input_template = Unicode("""
-        <option value="{key}" {first}>{display}</option>""",
+        <label for='item-{index}' class='form-control input-group'>
+            <div class='col-md-1'><input type='radio' name='profile' id='item-{index}' value='{key}' {first}></input></div>
+            <div class='col-md-11'><strong>{display}</strong></div>
+        </label>""",
         config = True,
         help = """Template to construct {input_template} in form_template. This text will be formatted
             against each item in the profiles list, in order, using the following key names:
