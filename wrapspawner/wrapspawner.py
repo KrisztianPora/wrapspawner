@@ -172,13 +172,7 @@ class ProfilesSpawner(WrapSpawner):
 
     child_profile = Unicode()
 
-    form_template = Unicode(
-        """
-        <script>
-            $(document).ready(function() {
-                $(".panel-heading").click(function(){$(".panel-body").slideToggle("slow")})
-            });
-        </script>
+    form_template = Unicode("""
         <style>
             label{font-weight:400}#profiles-list{margin-bottom:30px}input[type=text]{padding:0 5px;height:26px}.panel-heading{cursor:pointer;font-weight:700}
             .panel-body{display:none}.panel-default{margin:30px 0}.group{padding-bottom:5px}.group label{font-weight:700}.group div{margin-top:5px}.input-group{background-color:#EEE}
