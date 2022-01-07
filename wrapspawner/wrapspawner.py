@@ -188,8 +188,8 @@ class ProfilesSpawner(WrapSpawner):
         )
 
     input_template = Unicode("""
-        <label for='item-{i}' class='form-control input-group'>
-            <div class='col-md-1'><input type='radio' name='profile' id='item-{i}' value='{key}' {first}></input></div>
+        <label for='item-{index}' class='form-control input-group'>
+            <div class='col-md-1'><input type='radio' name='profile' id='item-{index}' value='{key}' {first}></input></div>
             <div class='col-md-11'><strong>{display}</strong></div>
         </label>""",
         config = True,
@@ -203,7 +203,7 @@ class ProfilesSpawner(WrapSpawner):
     options_form = Unicode()
 
     def _options_form_default(self):
-        temp_keys = [ dict(display=p[0], key=p[1], type=p[2], first='', i=index) for index, p in self.profiles ]
+        temp_keys = [ dict(display=p[0], key=p[1], type=p[2], first='', index=idx) for idx, p in enumerate(self.profiles) ]
         temp_keys[0]['first'] = self.first_template
         text = ''.join([ self.input_template.format(**tk) for tk in temp_keys ])
         return self.form_template.format(input_template=text)
