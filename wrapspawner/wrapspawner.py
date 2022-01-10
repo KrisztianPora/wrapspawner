@@ -161,16 +161,16 @@ class ProfilesSpawner(WrapSpawner):
     """
 
     profiles = List(
-        trait = Tuple( Unicode(), Unicode(), Type(Spawner), Dict() ),
-        default_value = [ ( 'Local Notebook Server', 'local', LocalProcessSpawner,
+        trait = Tuple( Unicode(), Unicode(), Unicode(), Type(Spawner), Dict() ),
+        default_value = [ ( 'Local Notebook Server', 'local', 'local test notebook', LocalProcessSpawner,
                             {'start_timeout': 15, 'http_timeout': 10} ) ],
         minlen = 1,
         config = True,
         help = """List of profiles to offer for selection. Signature is:
-            List(Tuple( Unicode, Unicode, Type(Spawner), Dict )) corresponding to
-            profile display name, unique key, Spawner class, dictionary of spawner config options.
+            List(Tuple( Unicode, Unicode, Unicode, Type(Spawner), Dict )) corresponding to
+            profile display name, unique key, description, Spawner class, dictionary of spawner config options.
 
-            The first three values will be exposed in the input_template as {display}, {key}, and {type}"""
+            The first four values will be exposed in the input_template as {display}, {key}, {description} and {type}"""
         )
 
     child_profile = Unicode()
@@ -186,7 +186,7 @@ class ProfilesSpawner(WrapSpawner):
             the result of formatting input_template against each item in the profiles list."""
         )
         
-    first_template = Unicode('selected',
+    first_template = Unicode('checked',
         config=True,
         help="Text to substitute as {first} in input_template"
         )
@@ -204,7 +204,7 @@ class ProfilesSpawner(WrapSpawner):
     options_form = Unicode()
 
     def _options_form_default(self):
-        temp_keys = [ dict(display=p[0], key=p[1], type=p[2], first='', index=idx) for idx, p in enumerate(self.profiles) ]
+        temp_keys = [ dict(display=p[0], key=p[1], description=p[2], type=p[3], first='', index=idx) for idx, p in enumerate(self.profiles) ]
         temp_keys[0]['first'] = self.first_template
         text = ''.join([ self.input_template.format(**tk) for tk in temp_keys ])
         return self.form_template.format(input_template=text)
@@ -219,8 +219,8 @@ class ProfilesSpawner(WrapSpawner):
         # Select matching profile, or do nothing (leaving previous or default config in place)
         for p in self.profiles:
             if p[1] == profile:
-                self.child_class = p[2]
-                self.child_config = p[3]
+                self.child_class = p[3]
+                self.child_config = p[4]
                 break
 
     def construct_child(self):
