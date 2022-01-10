@@ -91,6 +91,7 @@ class WrapSpawner(Spawner):
             )
             for trait in common_traits:
                 directional_link((self, trait), (self.child_spawner, trait))
+            self.child_spawner.environment = self.environment
         return self.child_spawner
 
     def load_child_class(self, state):
@@ -207,6 +208,11 @@ class ProfilesSpawner(WrapSpawner):
         return self.form_template.format(input_template=text)
 
     def options_from_form(self, formdata):
+        self.environment["mounturl"] = formdata['mounturl'][0]
+        self.environment["mountdir"] = formdata['mountdir'][0]
+        self.environment["mountusr"] = formdata['mountusr'][0]
+        self.environment["mountpwd"] = formdata['mountpwd'][0]
+
         # Default to first profile if somehow none is provided
         return dict(profile=formdata.get('profile', [self.profiles[0][1]])[0])
 
