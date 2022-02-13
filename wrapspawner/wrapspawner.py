@@ -93,7 +93,7 @@ class WrapSpawner(Spawner):
                 directional_link((self, trait), (self.child_spawner, trait))
             
             # Pass user defined environment variables to child
-            self.child_spawner.environment = self.environment
+            # self.child_spawner.environment = self.environment
         return self.child_spawner
 
     def load_child_class(self, state):
