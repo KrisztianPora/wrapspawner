@@ -98,6 +98,9 @@ class WrapSpawner(Spawner):
             # trigger getter for child server property, is there a better fix?
             _ = self.child_spawner.server
             
+            #bug
+            print(self.user_options)
+            
         return self.child_spawner
 
     def load_child_class(self, state):
