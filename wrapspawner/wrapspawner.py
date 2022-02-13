@@ -94,6 +94,10 @@ class WrapSpawner(Spawner):
             
             # Pass user defined environment variables to child
             # self.child_spawner.environment = self.environment
+            
+            # trigger getter for child server property, is there a better fix?
+            _ = self.child_spawner.server
+            
         return self.child_spawner
 
     def load_child_class(self, state):
