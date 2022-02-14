@@ -78,8 +78,6 @@ class WrapSpawner(Spawner):
                 config = self.config,
                 **self.child_config
                 )
-             # add here!!! to fix JUPYTERHUB_SERVICE_PREFIX  problem
-            self.child_spawner.server = self._server
             
             # initial state will always be wrong since it will see *our* state
             self.child_spawner.clear_state()
@@ -94,15 +92,6 @@ class WrapSpawner(Spawner):
             )
             for trait in common_traits:
                 directional_link((self, trait), (self.child_spawner, trait))
-            
-            # Pass user defined environment variables to child
-            # self.child_spawner.environment = self.environment
-            
-            # trigger getter for child server property, is there a better fix?
-            _ = self.child_spawner.server
-            
-            #bug
-            print(self.user_options)
             
         return self.child_spawner
 
